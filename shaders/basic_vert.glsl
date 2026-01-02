@@ -1,0 +1,25 @@
+#version 330 core
+
+layout (location = 0) in vec3 pos;
+layout (location = 1) in vec3 normal;
+
+flat out vec3 v_normal;
+out vec3 v_fragPos;
+out vec4 v_fragPosLight;
+
+uniform mat4 u_model;
+uniform mat4 u_view;
+uniform mat4 u_projection;
+
+uniform mat4 u_lightProjection;
+
+void main() {
+    v_normal = normalize(mat3(u_model) * normal);
+    
+    v_fragPos = vec3(u_model * vec4(pos, 1.0)); // Transform vertex position;
+    v_fragPosLight = u_lightProjection * vec4(v_fragPos, 1.0);
+    
+    vec4 position = u_projection * u_view * u_model * vec4(pos, 1.0);
+
+    gl_Position = position;
+}
