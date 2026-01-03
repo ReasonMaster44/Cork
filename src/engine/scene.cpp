@@ -20,7 +20,7 @@
 Cork::Scene::Scene(Window* window, Camera* camera, glm::vec3 lightPos, glm::vec3 lightFacing) 
     : window(window), camera(camera), lightPos(lightPos), lightFacing(lightFacing) {
 
-    shader = Shader("Cork/shaders/basic_vert.glsl", "Cork/shaders/basic_frag.glsl");
+    shader = Shader("../Cork/shaders/basic_vert.glsl", "../Cork/shaders/basic_frag.glsl");
     projection = glm::perspective(glm::radians(90.0f), (float)window->WIN_W / (float)window->WIN_H, 0.1f, 100.0f);
 
     glm::mat4 orthogonalProjection = glm::ortho(-35.0f, 35.0f, -35.0f, 35.0f, 0.1f, 75.0f);

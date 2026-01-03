@@ -19,8 +19,8 @@
 
 
 Cork::Overlay::Overlay(Window* window) {
-    shader = Shader("Cork/shaders/overlay_vert.glsl", "Cork/shaders/overlay_frag.glsl");
-    textureShader = Shader("Cork/shaders/overlay_vert.glsl", "Cork/shaders/overlay_frag_tex.glsl");
+    shader = Shader("../Cork/shaders/overlay_vert.glsl", "../Cork/shaders/overlay_frag.glsl");
+    textureShader = Shader("../Cork/shaders/overlay_vert.glsl", "../Cork/shaders/overlay_frag_tex.glsl");
     
     projection = glm::ortho(0.0f, (float)window->WIN_W, (float)window->WIN_H, 0.0f, -1.0f, 1.0f);
 }
