@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+Cork::ShadowMap::ShadowMap() {}
+
 Cork::ShadowMap::ShadowMap(unsigned int width, unsigned int height) : width(width), height(height) {
     glGenFramebuffers(1, &fbo);
 
@@ -12,6 +14,8 @@ Cork::ShadowMap::ShadowMap(unsigned int width, unsigned int height) : width(widt
     bindTexture();
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE); // for debugging
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     
@@ -45,11 +49,13 @@ void Cork::ShadowMap::bindForRendering() {
     glCullFace(GL_FRONT);
     
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
     glEnable(GL_DEPTH_TEST);
+
     glClear(GL_DEPTH_BUFFER_BIT);
 
     glEnable(GL_POLYGON_OFFSET_FILL);
-    glPolygonOffset(1.1f, 4.0f);
+    glPolygonOffset(1.0f, 1.0f);
 }
 
 void Cork::ShadowMap::unbind(unsigned int frameBufferWidth, unsigned int frameBufferHeight) {

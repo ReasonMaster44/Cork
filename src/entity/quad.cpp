@@ -25,7 +25,7 @@ unsigned int quadIndexData[] = {
 
 Cork::Quad::Quad() {}
 
-Cork::Quad::Quad(glm::vec2 pos, glm::vec2 scale, glm::vec3 colour=glm::vec3(0.0f, 0.0f, 0.0f)) 
+Cork::Quad::Quad(glm::vec2 pos, glm::vec2 scale, glm::vec3 colour) 
     : pos(pos), scale(scale), colour(colour) {
         
     unsigned int layout[] = {2, 2};

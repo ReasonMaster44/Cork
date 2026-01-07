@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <iostream>
+
 #include "entity/cube.h"
 #include "entity/entity.h"
 
@@ -6,47 +9,47 @@
 #include "opengl/vao.h"
 
 // Flat shading:
-float cubeVertexData[] = {
-    // Positions            // Correct Flat Normals
+float Cork::Cube::cubeVertexData[216] = {
+    // Positions            // Flat Normals         // Colours
 
     // Front face (+Z)
-    -1.0f,  1.0f,  1.0f,     0.0f,  0.0f,  1.0f, // Top left
-     1.0f,  1.0f,  1.0f,     0.0f,  0.0f,  1.0f, // Top right
-    -1.0f, -1.0f,  1.0f,     0.0f,  0.0f,  1.0f, // Bottom left
-     1.0f, -1.0f,  1.0f,     0.0f,  0.0f,  1.0f, // Bottom right
+    -1.0f,  1.0f,  1.0f,     0.0f,  0.0f,  1.0f,     0.8f, 0.2f, 0.3f, // Top left
+     1.0f,  1.0f,  1.0f,     0.0f,  0.0f,  1.0f,     0.8f, 0.2f, 0.3f, // Top right
+    -1.0f, -1.0f,  1.0f,     0.0f,  0.0f,  1.0f,     0.8f, 0.2f, 0.3f, // Bottom left
+     1.0f, -1.0f,  1.0f,     0.0f,  0.0f,  1.0f,     0.8f, 0.2f, 0.3f, // Bottom right
 
     // Back face (-Z)
-    -1.0f,  1.0f, -1.0f,     0.0f,  0.0f, -1.0f, // Top left
-     1.0f,  1.0f, -1.0f,     0.0f,  0.0f, -1.0f, // Top right
-    -1.0f, -1.0f, -1.0f,     0.0f,  0.0f, -1.0f, // Bottom left
-     1.0f, -1.0f, -1.0f,     0.0f,  0.0f, -1.0f, // Bottom right
+    -1.0f,  1.0f, -1.0f,     0.0f,  0.0f, -1.0f,     0.8f, 0.2f, 0.3f, // Top left
+     1.0f,  1.0f, -1.0f,     0.0f,  0.0f, -1.0f,     0.8f, 0.2f, 0.3f, // Top right
+    -1.0f, -1.0f, -1.0f,     0.0f,  0.0f, -1.0f,     0.8f, 0.2f, 0.3f, // Bottom left
+     1.0f, -1.0f, -1.0f,     0.0f,  0.0f, -1.0f,     0.8f, 0.2f, 0.3f, // Bottom right
 
     // Left face (-X)
-    -1.0f,  1.0f, -1.0f,    -1.0f,  0.0f,  0.0f, // Top left
-    -1.0f,  1.0f,  1.0f,    -1.0f,  0.0f,  0.0f, // Top right
-    -1.0f, -1.0f, -1.0f,    -1.0f,  0.0f,  0.0f, // Bottom left
-    -1.0f, -1.0f,  1.0f,    -1.0f,  0.0f,  0.0f, // Bottom right
+    -1.0f,  1.0f, -1.0f,    -1.0f,  0.0f,  0.0f,     0.8f, 0.2f, 0.3f, // Top left
+    -1.0f,  1.0f,  1.0f,    -1.0f,  0.0f,  0.0f,     0.8f, 0.2f, 0.3f, // Top right
+    -1.0f, -1.0f, -1.0f,    -1.0f,  0.0f,  0.0f,     0.8f, 0.2f, 0.3f, // Bottom left
+    -1.0f, -1.0f,  1.0f,    -1.0f,  0.0f,  0.0f,     0.4f, 0.7f, 0.6f, // Bottom right
 
     // Right face (+X)
-     1.0f,  1.0f, -1.0f,     1.0f,  0.0f,  0.0f, // Top left
-     1.0f,  1.0f,  1.0f,     1.0f,  0.0f,  0.0f, // Top right
-     1.0f, -1.0f, -1.0f,     1.0f,  0.0f,  0.0f, // Bottom left
-     1.0f, -1.0f,  1.0f,     1.0f,  0.0f,  0.0f, // Bottom right
+     1.0f,  1.0f, -1.0f,     1.0f,  0.0f,  0.0f,     0.4f, 0.7f, 0.6f, // Top left
+     1.0f,  1.0f,  1.0f,     1.0f,  0.0f,  0.0f,     0.4f, 0.7f, 0.6f, // Top right
+     1.0f, -1.0f, -1.0f,     1.0f,  0.0f,  0.0f,     0.4f, 0.7f, 0.6f, // Bottom left
+     1.0f, -1.0f,  1.0f,     1.0f,  0.0f,  0.0f,     0.4f, 0.7f, 0.6f, // Bottom right
 
     // Top face (+Y)
-    -1.0f,  1.0f, -1.0f,     0.0f,  1.0f,  0.0f, // Top left
-     1.0f,  1.0f, -1.0f,     0.0f,  1.0f,  0.0f, // Top right
-    -1.0f,  1.0f,  1.0f,     0.0f,  1.0f,  0.0f, // Bottom left
-     1.0f,  1.0f,  1.0f,     0.0f,  1.0f,  0.0f, // Bottom right
+    -1.0f,  1.0f, -1.0f,     0.0f,  1.0f,  0.0f,     0.4f, 0.7f, 0.6f, // Top left
+     1.0f,  1.0f, -1.0f,     0.0f,  1.0f,  0.0f,     0.4f, 0.7f, 0.6f, // Top right
+    -1.0f,  1.0f,  1.0f,     0.0f,  1.0f,  0.0f,     0.4f, 0.7f, 0.6f, // Bottom left
+     1.0f,  1.0f,  1.0f,     0.0f,  1.0f,  0.0f,     0.4f, 0.7f, 0.6f, // Bottom right
 
     // Bottom face (-Y)
-    -1.0f, -1.0f, -1.0f,     0.0f, -1.0f,  0.0f, // Top left
-     1.0f, -1.0f, -1.0f,     0.0f, -1.0f,  0.0f, // Top right
-    -1.0f, -1.0f,  1.0f,     0.0f, -1.0f,  0.0f, // Bottom left
-     1.0f, -1.0f,  1.0f,     0.0f, -1.0f,  0.0f  // Bottom right
+    -1.0f, -1.0f, -1.0f,     0.0f, -1.0f,  0.0f,     0.4f, 0.7f, 0.6f, // Top left
+     1.0f, -1.0f, -1.0f,     0.0f, -1.0f,  0.0f,     0.4f, 0.7f, 0.6f, // Top right
+    -1.0f, -1.0f,  1.0f,     0.0f, -1.0f,  0.0f,     0.4f, 0.7f, 0.6f, // Bottom left
+     1.0f, -1.0f,  1.0f,     0.0f, -1.0f,  0.0f,     0.4f, 0.7f, 0.6f  // Bottom right
 };
 
-unsigned int cubeIndexData[] = {
+unsigned int Cork::Cube::cubeIndexData[] = {
     // Front face (+Z)
     0, 1, 2,
     1, 3, 2,
@@ -72,14 +75,66 @@ unsigned int cubeIndexData[] = {
     21, 23, 22
 };
 
+unsigned int Cork::Cube::layout[3] = {Cork::Cube::floatsPerAttribute, Cork::Cube::floatsPerAttribute, Cork::Cube::floatsPerAttribute};
+
 Cork::Cube::Cube(glm::vec3 pos, glm::vec3 scale, glm::vec3 colour) 
     : Entity(pos, scale, colour) {
-        
-    unsigned int layout[] = {3, 3};
 
-    vbo = VBO(cubeVertexData, sizeof(cubeVertexData));
-    ibo = IBO(cubeIndexData, sizeof(cubeIndexData));
 
-    vbo.bind();
-    vao = VAO(layout, 2);
+    std::copy(std::begin(cubeVertexData), std::end(cubeVertexData), std::begin(cvd));
+    
+    int offset = 0;
+    for (int i = 0; i < 216; i++) {
+        if (i % (floatsPerAttribute * numberOfVertAttributes) == 0) {
+            offset = 0;
+        }
+
+        if (offset == 6) {cvd[i] = colour.x;}
+        if (offset == 7) {cvd[i] = colour.y;}
+        if (offset == 8) {cvd[i] = colour.z;}
+
+        offset += 1;
+    }
+
+    updateBuffers();
 }
+
+void Cork::Cube::updateBuffers() {
+    vbo = VBO(cvd, sizeof(cvd));
+    ibo = IBO(cubeIndexData, sizeof(cubeIndexData));
+    vbo.bind();
+    vao = VAO(layout, numberOfVertAttributes);
+}
+void Cork::Cube::colourFace(glm::vec3 face, glm::vec3 colour) {
+    int faceIndex;
+
+    if (face == glm::vec3( 0.0f,  0.0f,  1.0f)) { faceIndex = 0; }
+    if (face == glm::vec3( 0.0f,  0.0f, -1.0f)) { faceIndex = 1; }
+    if (face == glm::vec3(-1.0f,  0.0f,  0.0f)) { faceIndex = 2; }
+    if (face == glm::vec3( 1.0f,  0.0f,  0.0f)) { faceIndex = 3; }
+    if (face == glm::vec3( 0.0f,  1.0f,  0.0f)) { faceIndex = 4; }
+    if (face == glm::vec3( 0.0f, -1.0f,  0.0f)) { faceIndex = 5; }
+
+
+    int offset = 0;
+    for (int i = faceIndex * floatsPerFace; i < faceIndex * floatsPerFace + floatsPerFace; i++) {
+        if (i % (floatsPerAttribute * numberOfVertAttributes) == 0) {
+            offset = 0;
+        }
+
+        if (offset == 6) {cvd[i] = colour.x;}
+        if (offset == 7) {cvd[i] = colour.y;}
+        if (offset == 8) {cvd[i] = colour.z;}
+
+        offset += 1;
+    }
+
+    updateBuffers();
+}
+
+void Cork::Cube::colourFrontFace(glm::vec3 colour)  { colourFace(glm::vec3( 0.0f,  0.0f,  1.0f), colour); }
+void Cork::Cube::colourBackFace(glm::vec3 colour)   { colourFace(glm::vec3( 0.0f,  0.0f, -1.0f), colour); }
+void Cork::Cube::colourLeftFace(glm::vec3 colour)   { colourFace(glm::vec3(-1.0f,  0.0f,  0.0f), colour); }
+void Cork::Cube::colourRightFace(glm::vec3 colour)  { colourFace(glm::vec3( 1.0f,  0.0f,  0.0f), colour); }
+void Cork::Cube::colourTopFace(glm::vec3 colour)    { colourFace(glm::vec3( 0.0f,  1.0f,  0.0f), colour); }
+void Cork::Cube::colourBottomFace(glm::vec3 colour) { colourFace(glm::vec3( 0.0f, -1.0f,  0.0f), colour); }

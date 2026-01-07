@@ -16,11 +16,10 @@ Cork::VAO::VAO(unsigned int* layout, unsigned int numberOfVertAttributes) {
 
     unsigned int pointer = 0;
     for (unsigned int i = 0; i < numberOfVertAttributes; i++) {
-        if (i > 0) {
-            pointer = layout[i - 1];
-        }
         GLCall(glVertexAttribPointer(i, layout[i], GL_FLOAT, GL_FALSE, stride, (void*)(pointer * sizeof(float))));
         GLCall(glEnableVertexAttribArray(i));
+
+        pointer += layout[i];
     }
 }
 

@@ -19,14 +19,20 @@
 
 
 Cork::Overlay::Overlay(Window* window) {
-    shader = Shader("../Cork/shaders/overlay_vert.glsl", "../Cork/shaders/overlay_frag.glsl");
+    basicShader = Shader("../Cork/shaders/overlay_vert.glsl", "../Cork/shaders/overlay_frag.glsl");
     textureShader = Shader("../Cork/shaders/overlay_vert.glsl", "../Cork/shaders/overlay_frag_tex.glsl");
-    
+
+    currentShader = &basicShader;
+
     projection = glm::ortho(0.0f, (float)window->WIN_W, (float)window->WIN_H, 0.0f, -1.0f, 1.0f);
 }
 
 void Cork::Overlay::add(Quad* newQuad) {
     quads.push_back(newQuad);
+}
+
+void Cork::Overlay::setShader(Shader* shader) {
+    currentShader = shader;
 }
 
 void Cork::Overlay::add(Text* text) {
@@ -36,8 +42,8 @@ void Cork::Overlay::add(Text* text) {
 }
 
 void Cork::Overlay::startFrame() {
-    shader.bind();
-    shader.setUniformMat4("u_projection", projection);
+    basicShader.bind();
+    basicShader.setUniformMat4("u_projection", projection);
 
     textureShader.bind();
     textureShader.setUniformMat4("u_projection", projection);
@@ -45,6 +51,6 @@ void Cork::Overlay::startFrame() {
 
 void Cork::Overlay::useTexture(Texture* texture, int index) {
     texture->bind(index);
-
+    currentShader = &textureShader;
     textureShader.setUniform1i("u_texture", index);
 }

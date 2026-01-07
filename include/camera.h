@@ -24,7 +24,7 @@ struct Camera {
 
     Camera();
 
-    Camera(glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f), float yaw = 270.0f, float pitch = 0.0f);
+    Camera(glm::vec3 pos = glm::vec3(0.0f), float yaw = 270.0f, float pitch = 0.0f);
 
     void updateViewMatrix();
 

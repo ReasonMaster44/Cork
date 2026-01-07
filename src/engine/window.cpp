@@ -23,7 +23,6 @@ Cork::Window::Window(unsigned int win_w, unsigned int win_h, const char *title)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
     
-    int frameBufferWidth, frameBufferHeight;
     glfwGetFramebufferSize(win, &frameBufferWidth, &frameBufferHeight);
     glViewport(0, 0, frameBufferWidth, frameBufferHeight);
 }

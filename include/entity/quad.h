@@ -27,7 +27,7 @@ struct Quad {
 
     Quad();
     
-    Quad(glm::vec2 pos, glm::vec2 scale, glm::vec3 colour);
+    Quad(glm::vec2 pos, glm::vec2 scale, glm::vec3 colour = glm::vec3(0.0f));
 
     void addTexture(Texture* _texture);
 

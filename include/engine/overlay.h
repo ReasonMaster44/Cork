@@ -14,8 +14,10 @@
 namespace Cork {
 
 struct Overlay {
-    Shader shader;
+    Shader basicShader;
     Shader textureShader;
+
+    Shader* currentShader;
 
     glm::mat4 projection;
     
@@ -26,6 +28,8 @@ struct Overlay {
     void add(Quad* newQuad);
 
     void add(Text* text);
+
+    void setShader(Cork::Shader* newShader);
 
     void startFrame();
 

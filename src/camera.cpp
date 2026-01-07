@@ -14,17 +14,21 @@ Cork::Camera::Camera(glm::vec3 pos, float yaw, float pitch)
 }
 
 void Cork::Camera::updateViewMatrix() {
-    glm::vec3 _front = glm::vec3(cos(glm::radians(yaw)) * cos(glm::radians(pitch)), 
-                                    sin(glm::radians(pitch)),
-                                    sin(glm::radians(yaw)) * cos(glm::radians(pitch)));
+    glm::vec3 _front = glm::vec3( cos(glm::radians(yaw)) * cos(glm::radians(pitch)), 
+                                  sin(glm::radians(pitch)),
+                                 -sin(glm::radians(yaw)) * cos(glm::radians(pitch)));
 
+    _front.x = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    _front.y = sin(glm::radians(pitch));
+    _front.z = -cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    
     front = glm::normalize(_front);
 
     glm::vec3 worldUp(0.0f, 1.0f, 0.0f);
 
     // Calculate right and up vectors
     glm::vec3 right = glm::normalize(glm::cross(front, worldUp));
-    glm::vec3 up    = glm::normalize(glm::cross(right, front));
+    glm::vec3 up    = glm::cross(right, front);
 
     // View matrix
     view = glm::lookAt(pos, pos + front, up);

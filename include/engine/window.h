@@ -10,6 +10,8 @@ struct Window {
     
     GLFWwindow* win;
 
+    int frameBufferWidth, frameBufferHeight;
+
 
     Window(unsigned int win_w, unsigned int win_h, const char *title);
 
