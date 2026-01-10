@@ -10,6 +10,7 @@
 // OpenGL
 #include "opengl/texture.h"
 #include "opengl/renderer.h"
+#include "opengl/framebuffer.h"
 
 // Entities
 #include "entity/plane.h"
@@ -20,3 +21,4 @@
 // Utilities
 #include "camera.h"
 #include "text.h"
+#include "post_process_pass.h"

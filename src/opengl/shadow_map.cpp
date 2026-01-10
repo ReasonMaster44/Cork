@@ -25,6 +25,7 @@ Cork::ShadowMap::ShadowMap(unsigned int width, unsigned int height) : width(widt
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, clampColour);
 
     bindFramebuffer();
+
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
@@ -49,6 +50,7 @@ void Cork::ShadowMap::bindForRendering() {
     glCullFace(GL_FRONT);
     
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glBindTexture(GL_TEXTURE_2D, texture);
 
     glEnable(GL_DEPTH_TEST);
 

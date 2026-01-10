@@ -42,15 +42,15 @@ void Cork::Overlay::add(Text* text) {
 }
 
 void Cork::Overlay::startFrame() {
-    basicShader.bind();
-    basicShader.setUniformMat4("u_projection", projection);
+    //basicShader.bind();
+    //basicShader.setUniformMat4("u_projection", projection);
 
-    textureShader.bind();
-    textureShader.setUniformMat4("u_projection", projection);
+    //textureShader.bind();
+    //textureShader.setUniformMat4("u_projection", projection);
+    currentShader->bind();
+    currentShader->setUniformMat4("u_projection", projection);
 }
 
-void Cork::Overlay::useTexture(Texture* texture, int index) {
-    texture->bind(index);
+void Cork::Overlay::useTexture() {
     currentShader = &textureShader;
-    textureShader.setUniform1i("u_texture", index);
 }

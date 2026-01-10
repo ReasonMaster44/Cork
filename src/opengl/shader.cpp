@@ -61,6 +61,10 @@ void Cork::Shader::bind() {
     GLCall(glUseProgram(ID));
 }
 
+void Cork::Shader::unbind() {
+    GLCall(glUseProgram(0));
+}
+
 void Cork::Shader::setUniformMat4(std::string name, glm::mat4 matrix) {
     GLCall(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(matrix)));
 }
@@ -71,6 +75,10 @@ void Cork::Shader::setUniformVec3(std::string name, glm::vec3 vector) {
 
 void Cork::Shader::setUniform1i(std::string name, int value) {
     GLCall(glUniform1i(getUniformLocation(name), value));
+}
+
+void Cork::Shader::setUniformVec2(std::string name, glm::vec2 vector) {
+    GLCall(glUniform2f(getUniformLocation(name), vector.x, vector.y));
 }
 
 int Cork::Shader::getUniformLocation(std::string name) {

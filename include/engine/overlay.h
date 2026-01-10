@@ -33,7 +33,7 @@ struct Overlay {
 
     void startFrame();
 
-    void useTexture(Texture* texture, int index);
+    void useTexture();
 };
 
 }

@@ -63,3 +63,10 @@ void Cork::Scene::updateLightProjection() {
 
     lightProjection = lightOrthogonalProjection * lightView;
 }
+
+void Cork::Scene::addPostProcessPass(Cork::PostProcessPass* postProcessPass) {
+    postProcessPasses.push_back(postProcessPass);
+
+    postProcessPass->shader.bind();
+    postProcessPass->shader.setUniformMat4("u_projection", glm::ortho(0.0f, (float)window->frameBufferWidth, (float)window->frameBufferHeight, 0.0f, -1.0f, 1.0f));
+}

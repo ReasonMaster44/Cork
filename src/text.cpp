@@ -15,11 +15,10 @@
 //    
 //}
 
-Cork::Text::Text(std::string fontAtlasPath, std::string text, glm::vec2 pos, glm::vec2 scale) 
-    : fontAtlas(fontAtlasPath) {
+Cork::Text::Text(std::string fontAtlasPath, std::string text, glm::vec2 pos, glm::vec2 scale) {
 
-    Quad newQuad1 = Quad(pos, scale, glm::vec3(0.0f, 0.0f, 0.0f));
-    newQuad1.addTexture(&fontAtlas);
-
-    quads.push_back(newQuad1);
+    //Quad newQuad1 = Quad(pos, scale, glm::vec3(0.0f, 0.0f, 0.0f));
+    //newQuad1.addTexture(&fontAtlas);
+//
+    //quads.push_back(newQuad1);
 }

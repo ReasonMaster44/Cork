@@ -1,3 +1,5 @@
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "opengl/renderer.h"
 
 #include "opengl/shader.h"
@@ -16,6 +18,8 @@
 Cork::Renderer::Renderer(Window* window) {
     shadowMapDebugQuad = Cork::Quad(glm::vec2(0.0f), glm::vec2((float)window->WIN_W, (float)window->WIN_H));
     shadowMapDebugShader = Cork::Shader("../Cork/shaders/shadowmap_vert_debug.glsl", "../Cork/shaders/shadowmap_frag_debug.glsl");
+
+    framebufferQuad = Cork::Quad(glm::vec2(0.0f, 0.0f), glm::vec2((float)window->frameBufferWidth, (float)window->frameBufferHeight));
 }
 
 void Cork::Renderer::clear() {
@@ -60,33 +64,85 @@ void Cork::Renderer::renderShadowMapDebug(Scene* scene) {
 }
 
 void Cork::Renderer::renderScene(Scene* scene) {
-    GLCall(glEnable(GL_DEPTH_TEST));
-
+    clear();
     renderShadowMap(scene);
 
-    for (Entity* entity : scene->entities) {
+    int numberOfPostProcessPasses = scene->postProcessPasses.size();
+    unsigned int textureSlot = 10;
+
+    if (numberOfPostProcessPasses > 0) {
+        scene->postProcessPasses[0]->framebuffer.bind();
+        scene->postProcessPasses[0]->texture.bind(textureSlot);
+        clear();
+    }
+
+    renderEntities(scene);
+    
+    GLCall(glDisable(GL_DEPTH_TEST));
+
+    if (numberOfPostProcessPasses > 0) {
+        for (int i = 1; i < numberOfPostProcessPasses; i++) {
+            scene->postProcessPasses[i]->texture.bind(textureSlot + 1);
+            scene->postProcessPasses[i]->framebuffer.bind();
+
+            renderPostProcessPass(scene, i - 1, textureSlot);
+            textureSlot++;
+        }
+
+        Cork::FrameBuffer::bindDefault();
+
+        renderPostProcessPass(scene, numberOfPostProcessPasses - 1, textureSlot);
+    }
+}
+
+void Cork::Renderer::renderEntities(Cork::Scene* scene) {
+    GLCall(glEnable(GL_DEPTH_TEST));
+    
+    for (Cork::Entity* entity : scene->entities) {
         scene->shader.bind();
         scene->shader.setUniformMat4("u_model", entity->model);
-        //scene->shader.setUniformVec3("u_baseColour", entity->colour);
         render(&entity->ibo, &entity->vao, &scene->shader);
     }
+}
+
+void Cork::Renderer::renderPostProcessPass(Cork::Scene* scene, int frameBufferIndex, int textureSlot) {
+    std::string baseUniformName = "u_screenTexture";
+    std::string currentUniformName = baseUniformName + std::to_string(frameBufferIndex);
+
+
+    scene->postProcessPasses[frameBufferIndex]->shader.bind();
+    scene->postProcessPasses[frameBufferIndex]->shader.setUniform1i(currentUniformName, textureSlot);
+
+    for (int i = 0; i < frameBufferIndex; i++) {
+        currentUniformName = baseUniformName + std::to_string(frameBufferIndex - i - 1);
+
+        scene->postProcessPasses[frameBufferIndex - i - 1]->texture.bind(textureSlot - i - 1);
+        scene->postProcessPasses[frameBufferIndex]->shader.setUniform1i(currentUniformName, textureSlot - i - 1);
+    }
+
+    scene->postProcessPasses[frameBufferIndex]->shader.setUniformMat4("u_model", framebufferQuad.model);
+    render(&framebufferQuad.ibo, &framebufferQuad.vao, &scene->postProcessPasses[frameBufferIndex]->shader);
 }
 
 void Cork::Renderer::renderOverlay(Overlay* overlay) {
     GLCall(glDisable(GL_DEPTH_TEST));
     
     for (Quad* quad : overlay->quads) {
+        overlay->currentShader->bind();
+        overlay->currentShader->setUniformMat4("u_model", quad->model);
+
         if (quad->texture == nullptr) {
-            overlay->currentShader->bind();
-            overlay->currentShader->setUniformMat4("u_model", quad->model);
             overlay->currentShader->setUniformVec3("u_baseColour", quad->colour);
         } else {
-            overlay->textureShader.bind();
-            quad->texture->bind(0);
-            overlay->textureShader.setUniformMat4("u_model", quad->model);
-            overlay->textureShader.setUniform1i("u_texture", 0);  
+            quad->texture->bind(5);
+            overlay->currentShader->setUniform1i("u_texture", 5);  
+            //quad->texture->unbind();
         }
+
+        //quad->texture->bind(0);
+        //overlay->currentShader->setUniform1i("u_texture", 0);  
         
         render(&quad->ibo, &quad->vao, overlay->currentShader);
+        overlay->currentShader->unbind();
     }
 }

@@ -26,9 +26,13 @@ struct Shader {
 
     void bind();
 
+    void unbind();
+
     void setUniformMat4(std::string name, glm::mat4 matrix);
 
     void setUniformVec3(std::string name, glm::vec3 vector);
+
+    void setUniformVec2(std::string name, glm::vec2 vector);
 
     void setUniform1i(std::string name, int value);
 

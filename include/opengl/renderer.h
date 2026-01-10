@@ -14,22 +14,30 @@
 namespace Cork {
 
 struct Renderer {
-    Quad shadowMapDebugQuad;
+    Cork::Quad shadowMapDebugQuad;
+    Cork::Quad framebufferQuad;
+
     Cork::Shader shadowMapDebugShader;
 
-    Renderer(Window* window);
+    Renderer(Cork::Window* window);
 
     void clear();
 
-    void render(IBO* ibo, VAO* vao, Shader* shader);
+    void render(Cork::IBO* ibo, Cork::VAO* vao, Cork::Shader* shader);
 
-    void renderShadowMap(Scene* scene);
+    void renderShadowMap(Cork::Scene* scene);
 
     void renderShadowMapDebug(Scene* scene);
 
-    void renderScene(Scene* scene);
+    void renderScene(Cork::Scene* scene);
 
-    void renderOverlay(Overlay* overlay);
+    void renderEntities(Cork::Scene* scene);
+
+    void renderPostProcessPass(Cork::Scene* scene, int frameBufferIndex, int textureSlot);
+
+    void renderOverlay(Cork::Overlay* overlay);
+
+    
 };
 
 }

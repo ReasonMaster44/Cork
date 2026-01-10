@@ -34,7 +34,7 @@ float calculateShadowOld() {
     vec2 texelSize = 1.0 / vec2(textureSize(u_shadowMap, 0));
 
     float shadow = 0.0;
-    float bias = 0.01;
+    float bias = 0.002;
     float samples = 0.0;
 
     // Soft shadow sampling (7x7 grid)
