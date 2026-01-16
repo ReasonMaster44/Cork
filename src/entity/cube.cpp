@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "entity/cube.h"
-#include "entity/entity.h"
+#include "entity/mesh.h"
 
 #include "opengl/vbo.h"
 #include "opengl/ibo.h"
@@ -77,8 +77,10 @@ unsigned int Cork::Cube::cubeIndexData[] = {
 
 unsigned int Cork::Cube::layout[3] = {Cork::Cube::floatsPerAttribute, Cork::Cube::floatsPerAttribute, Cork::Cube::floatsPerAttribute};
 
+Cork::Cube::Cube() {}
+
 Cork::Cube::Cube(glm::vec3 pos, glm::vec3 scale, glm::vec3 colour) 
-    : Entity(pos, scale, colour) {
+    : Mesh(pos, scale, colour) {
 
 
     std::copy(std::begin(cubeVertexData), std::end(cubeVertexData), std::begin(cvd));
@@ -138,3 +140,9 @@ void Cork::Cube::colourLeftFace(glm::vec3 colour)   { colourFace(glm::vec3(-1.0f
 void Cork::Cube::colourRightFace(glm::vec3 colour)  { colourFace(glm::vec3( 1.0f,  0.0f,  0.0f), colour); }
 void Cork::Cube::colourTopFace(glm::vec3 colour)    { colourFace(glm::vec3( 0.0f,  1.0f,  0.0f), colour); }
 void Cork::Cube::colourBottomFace(glm::vec3 colour) { colourFace(glm::vec3( 0.0f, -1.0f,  0.0f), colour); }
+
+bool Cork::Cube::collide(Cork::Cube* cube) {
+    return (cube->pos.x - cube->scale.x >= pos.x - scale.x && cube->pos.x + cube->scale.x <= pos.x + scale.x &&
+            cube->pos.y - cube->scale.y >= pos.y - scale.y && cube->pos.y + cube->scale.y <= pos.y + scale.y &&
+            cube->pos.z - cube->scale.z >= pos.z - scale.z && cube->pos.z + cube->scale.z <= pos.z + scale.z);
+}

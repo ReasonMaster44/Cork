@@ -3,13 +3,17 @@
 #include "glm/glm.hpp"
 #include "GLFW/glfw3.h"
 
+#include "entity/entity.h"
+
 namespace Cork {
 
-struct Camera {
-    glm::vec3 pos;
+struct Camera : Cork::Entity {
     glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f);
-    
+    glm::vec3 lookAtTarget;
     glm::mat4 view = glm::mat4(1.0f);
+
+    bool setLookAt = false;
+
 
     float yaw;
     float pitch;
@@ -26,11 +30,9 @@ struct Camera {
 
     Camera(glm::vec3 pos = glm::vec3(0.0f), float yaw = 270.0f, float pitch = 0.0f);
 
-    void updateViewMatrix();
-
-    void rotate(float relMouseX, float relMouseY);
-
-    void move(glm::vec3 move);
+    void update() override;
+    
+    void lookAt(glm::vec3 point);
 };
 
 }

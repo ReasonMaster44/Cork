@@ -1,5 +1,5 @@
 #include "entity/plane.h"
-#include "entity/entity.h"
+#include "entity/mesh.h"
 
 #include "opengl/vbo.h"
 #include "opengl/ibo.h"
@@ -20,7 +20,7 @@ unsigned int planeIndexData[] = {
 };
 
 Cork::Plane::Plane(glm::vec3 pos, glm::vec2 scale, glm::vec3 colour) 
-    : Entity(pos, glm::vec3(scale.x, scale.y, 0.0f), colour) {
+    : Mesh(pos, glm::vec3(scale.x, scale.y, 0.0f), colour) {
         
     unsigned int layout[] = {3, 3};
 

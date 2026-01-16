@@ -1,4 +1,5 @@
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/glm.hpp>
 
 #include "opengl/renderer.h"
 
@@ -12,7 +13,7 @@
 #include "engine/overlay.h"
 #include "engine/window.h"
 
-#include "entity/entity.h"
+#include "entity/mesh.h"
 #include "entity/quad.h"
 
 Cork::Renderer::Renderer(Window* window) {
@@ -37,15 +38,19 @@ void Cork::Renderer::render(IBO* ibo, VAO* vao, Shader* shader) {
 void Cork::Renderer::renderShadowMap(Scene* scene) {
     scene->shadowMap.bindForRendering();
 
-    scene->shadowMapShader.bind();
-    scene->shadowMapShader.setUniformMat4("u_lightProjection", scene->lightProjection);
 
-    for (Entity* entity : scene->entities) {
-        scene->shadowMapShader.setUniformMat4("u_model", entity->model);
-        render(&entity->ibo, &entity->vao, &scene->shadowMapShader);
+    scene->shadowMapShader.bind();
+    scene->shadowMapShader.setUniformMat4("u_lightProjection", scene->light->projection);
+    scene->shadowMapShader.setUniformMat4("u_lightView", scene->light->view);
+
+
+    for (Mesh* mesh : scene->meshes) {
+        scene->shadowMapShader.setUniformMat4("u_model", mesh->model);
+        render(&mesh->ibo, &mesh->vao, &scene->shadowMapShader);
     }
 
     scene->shadowMap.unbind(scene->window->frameBufferWidth, scene->window->frameBufferHeight);
+
 }
 
 void Cork::Renderer::renderShadowMapDebug(Scene* scene) {
@@ -67,23 +72,25 @@ void Cork::Renderer::renderScene(Scene* scene) {
     clear();
     renderShadowMap(scene);
 
-    int numberOfPostProcessPasses = scene->postProcessPasses.size();
+    
+    int numberOfPostProcessPasses = scene->postProcessingChain.passes.size();
     unsigned int textureSlot = 10;
 
     if (numberOfPostProcessPasses > 0) {
-        scene->postProcessPasses[0]->framebuffer.bind();
-        scene->postProcessPasses[0]->texture.bind(textureSlot);
+        scene->postProcessingChain.passes[0].framebuffer.bind();
+        scene->postProcessingChain.passes[0].texture.bind(textureSlot);
         clear();
     }
+    
 
-    renderEntities(scene);
+    renderMeshes(scene);
     
     GLCall(glDisable(GL_DEPTH_TEST));
 
     if (numberOfPostProcessPasses > 0) {
         for (int i = 1; i < numberOfPostProcessPasses; i++) {
-            scene->postProcessPasses[i]->texture.bind(textureSlot + 1);
-            scene->postProcessPasses[i]->framebuffer.bind();
+            scene->postProcessingChain.passes[i].texture.bind(textureSlot + 1);
+            scene->postProcessingChain.passes[i].framebuffer.bind();
 
             renderPostProcessPass(scene, i - 1, textureSlot);
             textureSlot++;
@@ -95,13 +102,18 @@ void Cork::Renderer::renderScene(Scene* scene) {
     }
 }
 
-void Cork::Renderer::renderEntities(Cork::Scene* scene) {
+void Cork::Renderer::renderMeshes(Cork::Scene* scene) {
     GLCall(glEnable(GL_DEPTH_TEST));
-    
-    for (Cork::Entity* entity : scene->entities) {
-        scene->shader.bind();
-        scene->shader.setUniformMat4("u_model", entity->model);
-        render(&entity->ibo, &entity->vao, &scene->shader);
+    scene->shader.bind();
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, scene->shadowMap.texture);
+
+    scene->shader.setUniform1i("u_shadowMap", 0);
+
+    for (Cork::Mesh* mesh : scene->meshes) {
+        scene->shader.setUniformMat4("u_model", mesh->model);
+        render(&mesh->ibo, &mesh->vao, &scene->shader);
     }
 }
 
@@ -109,19 +121,18 @@ void Cork::Renderer::renderPostProcessPass(Cork::Scene* scene, int frameBufferIn
     std::string baseUniformName = "u_screenTexture";
     std::string currentUniformName = baseUniformName + std::to_string(frameBufferIndex);
 
-
-    scene->postProcessPasses[frameBufferIndex]->shader.bind();
-    scene->postProcessPasses[frameBufferIndex]->shader.setUniform1i(currentUniformName, textureSlot);
+    scene->postProcessingChain.passes[frameBufferIndex].shader.bind();
+    scene->postProcessingChain.passes[frameBufferIndex].shader.setUniform1i(currentUniformName, textureSlot);
 
     for (int i = 0; i < frameBufferIndex; i++) {
         currentUniformName = baseUniformName + std::to_string(frameBufferIndex - i - 1);
 
-        scene->postProcessPasses[frameBufferIndex - i - 1]->texture.bind(textureSlot - i - 1);
-        scene->postProcessPasses[frameBufferIndex]->shader.setUniform1i(currentUniformName, textureSlot - i - 1);
+        scene->postProcessingChain.passes[frameBufferIndex - i - 1].texture.bind(textureSlot - i - 1);
+        scene->postProcessingChain.passes[frameBufferIndex].shader.setUniform1i(currentUniformName, textureSlot - i - 1);
     }
-
-    scene->postProcessPasses[frameBufferIndex]->shader.setUniformMat4("u_model", framebufferQuad.model);
-    render(&framebufferQuad.ibo, &framebufferQuad.vao, &scene->postProcessPasses[frameBufferIndex]->shader);
+    
+    scene->postProcessingChain.passes[frameBufferIndex].shader.setUniformMat4("u_model", framebufferQuad.model);
+    render(&framebufferQuad.ibo, &framebufferQuad.vao, &scene->postProcessingChain.passes[frameBufferIndex].shader);
 }
 
 void Cork::Renderer::renderOverlay(Overlay* overlay) {

@@ -16,6 +16,8 @@ struct PostProcessPass {
     Cork::FrameBuffer framebuffer;
 
     PostProcessPass(std::string shaderFilePath, Window* window);
+
+    void update(int timeElapsed);
 };
 
 }

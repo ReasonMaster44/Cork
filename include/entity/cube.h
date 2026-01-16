@@ -1,11 +1,11 @@
 #pragma once
 
-#include "entity/entity.h"
+#include "entity/mesh.h"
 #include "glm/glm.hpp"
 
 namespace Cork {
 
-struct Cube : Entity {
+struct Cube : Cork::Mesh {
     static float cubeVertexData[216];
     static unsigned int cubeIndexData[36];
 
@@ -17,8 +17,10 @@ struct Cube : Entity {
     static constexpr unsigned int floatsPerFace = 4 * floatsPerAttribute * numberOfVertAttributes;
 
     float cvd[216];
-
-    Cube(glm::vec3 pos, glm::vec3 scale, glm::vec3 colour);
+    
+    Cube();
+    
+    Cube(glm::vec3 pos, glm::vec3 scale, glm::vec3 colour = glm::vec3(0.0f));
 
     void updateBuffers();
 
@@ -30,6 +32,8 @@ struct Cube : Entity {
     void colourBackFace(glm::vec3 colour);
     void colourLeftFace(glm::vec3 colour);
     void colourRightFace(glm::vec3 colour);
+
+    bool collide(Cork::Cube* cube);
 
 };
 

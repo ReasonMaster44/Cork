@@ -22,3 +22,4 @@
 #include "camera.h"
 #include "text.h"
 #include "post_process_pass.h"
+#include "light_source.h"

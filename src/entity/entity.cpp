@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "entity/entity.h"
 
 #include "opengl/vbo.h"
@@ -7,20 +9,23 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-Cork::Entity::Entity(glm::vec3 pos, glm::vec3 scale, glm::vec3 colour)
-    : pos(pos), scale(scale), colour(colour) {
 
-    updateModel();
+Cork::Entity::Entity() {}
+
+Cork::Entity::Entity(glm::vec3 pos)
+    : pos(pos) {
+
+    update();
 }
 
 void Cork::Entity::move(glm::vec3 offset) {
     pos += offset;
-    updateModel();
+    update();
 }
 
 void Cork::Entity::setPos(glm::vec3 newPos) {
     pos = newPos;
-    updateModel();
+    update();
 }
 
 void Cork::Entity::rotateAround(float angle, glm::vec3 axis, glm::vec3 point) {
@@ -33,21 +38,12 @@ void Cork::Entity::rotateAround(float angle, glm::vec3 axis, glm::vec3 point) {
 
     orientation = glm::rotate(glm::mat4(1.0f), angle, glm::normalize(axis)) * orientation;
     
-    updateModel();
+    update();
 }
 
 void Cork::Entity::rotate(glm::vec3 _rotation) {
     rotation += _rotation;
-    updateModel();
+    update();
 }
 
-void Cork::Entity::updateModel() {
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, pos);
-    model = model * orientation;
-    model = glm::scale(model, scale);
-
-    //model = glm::rotate(model, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-    //model = glm::rotate(model, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-    //model = glm::rotate(model, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));    
-}
+void Cork::Entity::update() {}

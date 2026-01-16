@@ -1,6 +1,6 @@
 #include "glm/glm.hpp"
 
-#include "entity.h"
+#include "entity/mesh.h"
 #include <string>
 
 namespace Cork {
@@ -12,7 +12,7 @@ struct Vertex {
     Vertex(glm::vec3 pos, glm::vec3 norm);
 };
 
-struct Model : Entity {
+struct Model : Cork::Mesh {
     Model(std::string objFilePath, glm::vec3 pos, glm::vec3 scale, glm::vec3 colour);
 };
 

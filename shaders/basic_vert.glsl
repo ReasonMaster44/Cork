@@ -16,12 +16,16 @@ uniform mat4 u_projection;
 uniform mat4 u_lightProjection;
 uniform mat4 u_lightView;
 
+
 void main() {
     v_normal = normalize(mat3(u_model) * normal);
     
     v_fragPos = vec3(u_model * vec4(pos, 1.0)); // Transform vertex position;
 
-    v_fragPosLight = u_lightProjection * vec4(v_fragPos, 1.0);
+    vec4 viewSpace = u_lightView * vec4(v_fragPos, 1.0);
+    vec4 projSpace = u_lightProjection * viewSpace;
+
+    v_fragPosLight = projSpace;
 
     v_colour = colour;
 

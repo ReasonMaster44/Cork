@@ -9,20 +9,13 @@
 namespace Cork {
 
 struct Entity {
-    VBO vbo;
-    IBO ibo;
-    VAO vao;
-
     glm::vec3 pos;
-    glm::vec3 scale;
-    glm::vec3 colour;
 
     glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::mat4 model = glm::mat4(1.0f);
     glm::mat4 orientation = glm::mat4(1.0f);
 
-
-    Entity(glm::vec3 pos, glm::vec3 scale, glm::vec3 colour);
+    Entity();
+    Entity(glm::vec3 pos);
 
     void move(glm::vec3 offset);
 
@@ -32,7 +25,7 @@ struct Entity {
     
     void rotate(glm::vec3 _rotation);
 
-    void updateModel();
+    virtual void update();
 };
 
 }

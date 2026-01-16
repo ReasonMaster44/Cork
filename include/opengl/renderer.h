@@ -31,7 +31,7 @@ struct Renderer {
 
     void renderScene(Cork::Scene* scene);
 
-    void renderEntities(Cork::Scene* scene);
+    void renderMeshes(Cork::Scene* scene);
 
     void renderPostProcessPass(Cork::Scene* scene, int frameBufferIndex, int textureSlot);
 

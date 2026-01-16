@@ -81,6 +81,10 @@ void Cork::Shader::setUniformVec2(std::string name, glm::vec2 vector) {
     GLCall(glUniform2f(getUniformLocation(name), vector.x, vector.y));
 }
 
+void Cork::Shader::setUniform1f(std::string name, float value) {
+    GLCall(glUniform1f(getUniformLocation(name), value));
+}
+
 int Cork::Shader::getUniformLocation(std::string name) {
     bind();
     const char* nameCstring = name.c_str();

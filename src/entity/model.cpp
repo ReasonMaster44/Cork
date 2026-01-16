@@ -1,5 +1,5 @@
 #include "entity/model.h"
-#include "entity/entity.h"
+#include "entity/mesh.h"
 
 #include "opengl/vbo.h"
 #include "opengl/ibo.h"
@@ -14,7 +14,7 @@ Cork::Vertex::Vertex(glm::vec3 pos, glm::vec3 norm) : pos(pos), norm(norm) {}
 
 
 Cork::Model::Model(std::string objFilePath, glm::vec3 pos, glm::vec3 scale, glm::vec3 colour) 
-    : Entity(pos, scale, colour) {
+    : Mesh(pos, scale, colour) {
 
     std::ifstream file(objFilePath);
     std::string line;
@@ -110,5 +110,5 @@ Cork::Model::Model(std::string objFilePath, glm::vec3 pos, glm::vec3 scale, glm:
     vbo.bind();
     vao = VAO(layout, 2);
 
-    updateModel();
+    update();
 }

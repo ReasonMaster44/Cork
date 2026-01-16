@@ -10,7 +10,7 @@
 #include "opengl/shadow_map.h"
 
 #include "entity/cube.h"
-#include "entity/entity.h"
+#include "entity/mesh.h"
 
 #include "engine/window.h"
 #include "engine/scene.h"
@@ -18,34 +18,49 @@
 #include "camera.h"
 
 
-Cork::Scene::Scene(Window* window, Camera* camera, glm::vec3 lightPos, glm::vec3 lightFacing) 
-    : window(window), camera(camera), lightPos(lightPos), lightFacing(lightFacing) {
+Cork::Scene::Scene(Cork::Window* window, Cork::Camera* camera, Cork::LightSource* light) 
+    : window(window), camera(camera), light(light) {
 
     shadowMap = ShadowMap(2048, 2048);
     shader = Shader("../Cork/shaders/basic_vert.glsl", "../Cork/shaders/basic_frag.glsl");
     shadowMapShader = Shader("../Cork/shaders/shadowmap_vert.glsl", "../Cork/shaders/shadowmap_frag.glsl");
 
     projection = glm::perspective(glm::radians(90.0f), (float)window->WIN_W / (float)window->WIN_H, 0.1f, 100.0f);
+    
+    postProcessingChain = PostProcessingChain(window);
 
-    lightOrthogonalProjection = glm::ortho(-35.0f, 35.0f, -35.0f, 35.0f, 0.1f, 75.0f);
-
-    updateLightProjection();
+    light->update();
 }
 
-void Cork::Scene::add(Entity* newEntity) {
-    entities.push_back(newEntity);
+void Cork::Scene::add(Mesh* newMesh) {
+    meshes.push_back(newMesh);
 }
+
+void Cork::Scene::remove(Mesh* mesh) {
+    meshes.erase(
+        std::remove(meshes.begin(), meshes.end(), mesh),
+        meshes.end()
+    );
+}
+
 
 void Cork::Scene::startFrame() {
-    updateLightProjection();
+    light->update();
+
+    postProcessingChain.update(timeElapsed);
 
     shader.bind();
 
     shader.setUniformMat4("u_view", camera->view);
     shader.setUniformMat4("u_projection", projection);
-    shader.setUniformMat4("u_lightProjection", lightProjection);
-    shader.setUniformVec3("u_lightPos", lightPos);
-    shader.setUniform1i("u_shadowMap", 0);
+
+    shader.setUniformMat4("u_lightProjection", light->projection);
+    shader.setUniformVec3("u_lightPos", light->pos);
+    shader.setUniformMat4("u_lightView", light->view);
+
+    //shader.setUniform1i("u_shadowMap", 0);
+
+    timeElapsed += 1;
 }
 
 void Cork::Scene::endFrame() {
@@ -53,20 +68,9 @@ void Cork::Scene::endFrame() {
     glfwPollEvents();
 }
 
-void Cork::Scene::updateLightProjection() {
-    glm::vec3 forward = glm::normalize(lightFacing - lightPos);
-    glm::vec3 worldUp = glm::vec3(0, 1, 0);
+void Cork::Scene::addPostProcessPass(std::string shaderFilePath) {
+    postProcessingChain.addPass(shaderFilePath);
 
-    if (glm::abs(glm::dot(forward, worldUp)) > 0.999f) { worldUp = glm::vec3(1, 0, 0); }
-
-    lightView = glm::lookAt(lightPos, lightFacing, worldUp);
-
-    lightProjection = lightOrthogonalProjection * lightView;
-}
-
-void Cork::Scene::addPostProcessPass(Cork::PostProcessPass* postProcessPass) {
-    postProcessPasses.push_back(postProcessPass);
-
-    postProcessPass->shader.bind();
-    postProcessPass->shader.setUniformMat4("u_projection", glm::ortho(0.0f, (float)window->frameBufferWidth, (float)window->frameBufferHeight, 0.0f, -1.0f, 1.0f));
+    postProcessingChain.passes.back().shader.bind();
+    postProcessingChain.passes.back().shader.setUniformMat4("u_projection", glm::ortho(0.0f, (float)window->frameBufferWidth, (float)window->frameBufferHeight, 0.0f, -1.0f, 1.0f));
 }

@@ -36,6 +36,8 @@ struct Shader {
 
     void setUniform1i(std::string name, int value);
 
+    void setUniform1f(std::string name, float value);
+
     int getUniformLocation(std::string name);
 };
 

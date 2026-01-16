@@ -13,7 +13,7 @@ Cork::ShadowMap::ShadowMap(unsigned int width, unsigned int height) : width(widt
     glGenTextures(1, &texture);
     bindTexture();
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE); // for debugging
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -23,6 +23,10 @@ Cork::ShadowMap::ShadowMap(unsigned int width, unsigned int height) : width(widt
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     float clampColour[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, clampColour);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+    
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     bindFramebuffer();
 
@@ -47,10 +51,10 @@ void Cork::ShadowMap::bindTexture() {
 
 void Cork::ShadowMap::bindForRendering() {
     glViewport(0, 0, width, height);
-    glCullFace(GL_FRONT);
+    //glCullFace(GL_FRONT);
     
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    //glBindTexture(GL_TEXTURE_2D, texture);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -64,6 +68,8 @@ void Cork::ShadowMap::unbind(unsigned int frameBufferWidth, unsigned int frameBu
     glDisable(GL_POLYGON_OFFSET_FILL);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
     glViewport(0, 0, frameBufferWidth, frameBufferHeight);
     glCullFace(GL_BACK);
 }
