@@ -16,6 +16,9 @@ struct Window {
     Window(unsigned int win_w, unsigned int win_h, const char *title);
 
     bool shouldClose();
+
+    void disableCursor();
+    void enableCursor();
 };
 
 }

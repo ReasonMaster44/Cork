@@ -10,12 +10,16 @@
 
 Cork::Shader::Shader() {}
 
-Cork::Shader::Shader(std::string vertSourceCodePath, std::string fragSourceCodePath) {
+Cork::Shader::Shader(std::string vertSourceCodePath, std::string fragSourceCodePath, std::string geomSourceCodePath) {
     std::string vertSourceCode = parseShaderFile(vertSourceCodePath);
     const char* vertSourceCodeCstr = vertSourceCode.c_str();
 
     std::string fragSourceCode = parseShaderFile(fragSourceCodePath);
     const char* fragSourceCodeCstr = fragSourceCode.c_str();
+
+    std::string geomSourceCode = "";
+    if (geomSourceCodePath != "") { geomSourceCode = parseShaderFile(geomSourceCodePath); }
+    const char* geomSourceCodeCstr = geomSourceCode.c_str();
 
     unsigned int vertShader = glCreateShader(GL_VERTEX_SHADER);
     GLCall(glShaderSource(vertShader, 1, &vertSourceCodeCstr, nullptr));
@@ -24,6 +28,14 @@ Cork::Shader::Shader(std::string vertSourceCodePath, std::string fragSourceCodeP
     unsigned int fragShader = glCreateShader(GL_FRAGMENT_SHADER);
     GLCall(glShaderSource(fragShader, 1, &fragSourceCodeCstr, nullptr));
     GLCall(glCompileShader(fragShader));
+    
+    unsigned int geomShader;
+    
+    if (geomSourceCode != "") {
+        geomShader = glCreateShader(GL_GEOMETRY_SHADER);
+        GLCall(glShaderSource(geomShader, 1, &geomSourceCodeCstr, nullptr));
+        GLCall(glCompileShader(geomShader));
+    }
 
     // Check for compilation errors
     int success;
@@ -41,9 +53,18 @@ Cork::Shader::Shader(std::string vertSourceCodePath, std::string fragSourceCodeP
         std::cerr << "Failed to compile fragment shader:\n" << infoLog << std::endl;
     }
     
+    if (geomSourceCode != "") {
+        GLCall(glGetShaderiv(geomShader, GL_COMPILE_STATUS, &success));
+        if (!success) {
+            GLCall(glGetShaderInfoLog(geomShader, 512, nullptr, infoLog));
+            std::cerr << "Failed to compile geometry shader:\n" << infoLog << std::endl;
+        }
+    }
+
     ID = glCreateProgram();
     GLCall(glAttachShader(ID, vertShader));
     GLCall(glAttachShader(ID, fragShader));
+    if (geomSourceCode != "") { GLCall(glAttachShader(ID, geomShader)); }
     GLCall(glLinkProgram(ID));
 
     // Check for linking errors
@@ -55,6 +76,7 @@ Cork::Shader::Shader(std::string vertSourceCodePath, std::string fragSourceCodeP
 
     GLCall(glDeleteShader(vertShader));
     GLCall(glDeleteShader(fragShader));
+    if (geomSourceCode != "") { GLCall(glDeleteShader(geomShader)); }
 }
 
 void Cork::Shader::bind() {

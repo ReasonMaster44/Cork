@@ -8,6 +8,9 @@ Cork::InputManager::InputManager(Window* window)
 
     keyHist[0] = -1;
     keyHist[1] = -1;
+
+    lcHist[0] = -1;
+    lcHist[1] = -1;
 }
 
 void Cork::InputManager::updateCursor() {
@@ -19,13 +22,26 @@ void Cork::InputManager::updateCursor() {
 
 void Cork::InputManager::update() {
     keyHist[0] = keyHist[1];
+    lcHist[0] = lcHist[1];
+
+    updateCursor();
 
     if (keyLeft()) {
         keyHist[1] = GLFW_KEY_LEFT;
     } else if (keyRight()) {
         keyHist[1] = GLFW_KEY_RIGHT;
+    } else if (keySpace()) {
+        keyHist[1] = GLFW_KEY_SPACE;
     } else {
         keyHist[1] = -1;
+    }
+
+    lc = glfwGetMouseButton(window->win, GLFW_MOUSE_BUTTON_LEFT);
+
+    if (lc) {
+        lcHist[1] = 1;
+    } else {
+        lcHist[1] = -1;
     }
 }
 
@@ -81,4 +97,10 @@ bool Cork::InputManager::clickKeyLeft() { return keyHist[1] == GLFW_KEY_LEFT && 
 
 bool Cork::InputManager::clickKeyRight() { return keyHist[1] == GLFW_KEY_RIGHT && keyHist[0] != GLFW_KEY_RIGHT; }
 
+bool Cork::InputManager::clickKeySpace() { return keyHist[1] == GLFW_KEY_SPACE && keyHist[0] != GLFW_KEY_SPACE; }
+
+bool Cork::InputManager::clickLc() { return lcHist[1] == 1 && lcHist[0] != 1; }
+
 bool Cork::InputManager::keySpace() { return glfwGetKey(window->win, GLFW_KEY_SPACE); }
+
+bool Cork::InputManager::keyLshift() { return glfwGetKey(window->win, GLFW_KEY_LEFT_SHIFT); }

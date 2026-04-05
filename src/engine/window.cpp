@@ -14,6 +14,7 @@ Cork::Window::Window(unsigned int win_w, unsigned int win_h, const char *title)
     }
 
     glfwMakeContextCurrent(win);
+    //glfwSwapInterval(0); // Vsync
     //glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // Initialise glad:
@@ -30,4 +31,12 @@ Cork::Window::Window(unsigned int win_w, unsigned int win_h, const char *title)
 
 bool Cork::Window::shouldClose() {
     return glfwWindowShouldClose(win);
+}
+
+void Cork::Window::disableCursor() {
+    glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Cork::Window::enableCursor() {
+    glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }

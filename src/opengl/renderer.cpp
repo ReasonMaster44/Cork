@@ -24,15 +24,15 @@ Cork::Renderer::Renderer(Window* window) {
 }
 
 void Cork::Renderer::clear() {
-    GLCall(glClearColor(0.105f, 0.12f, 0.13f, 1.0f));
+    GLCall(glClearColor(0.784, 0.851, 0.902, 1.0f));
     GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
-void Cork::Renderer::render(IBO* ibo, VAO* vao, Shader* shader) {
+void Cork::Renderer::render(IBO* ibo, VAO* vao, Shader* shader, GLenum mode) {
     vao->bind();
     ibo->bind();
 
-    GLCall(glDrawElements(GL_TRIANGLES, ibo->count, GL_UNSIGNED_INT, 0));
+    GLCall(glDrawElements(mode, ibo->count, GL_UNSIGNED_INT, 0));
 }
 
 void Cork::Renderer::renderShadowMap(Scene* scene) {

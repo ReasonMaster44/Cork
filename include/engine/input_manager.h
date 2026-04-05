@@ -6,10 +6,12 @@ struct InputManager {
     float relMx, relMy;
     double mx, my;
     float lastMx, lastMy;
+    bool lc;
     
     Window* window;
 
     int keyHist[2];
+    int lcHist[2];
 
     InputManager(Window* window);
 
@@ -63,10 +65,14 @@ struct InputManager {
     bool keyDown();
 
     bool clickKeyLeft();
-
     bool clickKeyRight();
+    bool clickKeySpace();
+
+    bool clickLc();
 
     bool keySpace();
+
+    bool keyLshift();
 };
 
 }

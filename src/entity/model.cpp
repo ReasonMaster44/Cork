@@ -1,3 +1,10 @@
+#include <iostream>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <fstream>
+
 #include "entity/model.h"
 #include "entity/mesh.h"
 
@@ -5,10 +12,7 @@
 #include "opengl/ibo.h"
 #include "opengl/vao.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
-#include <fstream>
 
 Cork::Vertex::Vertex(glm::vec3 pos, glm::vec3 norm) : pos(pos), norm(norm) {}
 
@@ -19,13 +23,15 @@ Cork::Model::Model(std::string objFilePath, glm::vec3 pos, glm::vec3 scale, glm:
     std::ifstream file(objFilePath);
     std::string line;
 
-    std::vector<glm::vec3> vertexPositions;
-    std::vector<glm::vec3> vertexNormals;
     std::vector<unsigned int> positionIndices;
     std::vector<unsigned int> normalIndices;
+    std::vector<unsigned int> colourIndices;
 
     unsigned int firstSpaceIndex;
     unsigned int secondSpaceIndex;
+    unsigned int thirdSpaceIndex;
+    unsigned int fourthSpaceIndex;
+    unsigned int fifthSpaceIndex;
 
     while (std::getline(file, line)) {
         // Vertex positions:
@@ -33,11 +39,20 @@ Cork::Model::Model(std::string objFilePath, glm::vec3 pos, glm::vec3 scale, glm:
             firstSpaceIndex = line.find(" ", 2);
             secondSpaceIndex = line.find(" ", firstSpaceIndex + 1);
 
+            thirdSpaceIndex = line.find(" ", secondSpaceIndex + 1);
+            fourthSpaceIndex = line.find(" ", thirdSpaceIndex + 1);
+            fifthSpaceIndex = line.find(" ", fourthSpaceIndex + 1);
+
             float x = std::stof(line.substr(2, firstSpaceIndex - 2));
             float y = std::stof(line.substr(firstSpaceIndex + 1, secondSpaceIndex - firstSpaceIndex - 1));
             float z = std::stof(line.substr(secondSpaceIndex + 1));
 
+            float r = std::stof(line.substr(thirdSpaceIndex + 1, fourthSpaceIndex - thirdSpaceIndex - 1));
+            float g = std::stof(line.substr(fourthSpaceIndex + 1, fifthSpaceIndex - fourthSpaceIndex - 1));
+            float b = std::stof(line.substr(fourthSpaceIndex + 1));
+
             vertexPositions.push_back(glm::vec3(x, y, z));
+            vertexColours.push_back(glm::vec3(r, g, b));
 
         } else if (line.substr(0, 2) == "f ") { // Indices:
             firstSpaceIndex = line.find(" ", 2);
@@ -98,6 +113,12 @@ Cork::Model::Model(std::string objFilePath, glm::vec3 pos, glm::vec3 scale, glm:
         vertexDataCombined.push_back(norm.x);
         vertexDataCombined.push_back(norm.y);
         vertexDataCombined.push_back(norm.z);
+
+        glm::vec3 colour = vertexColours[positionIndices[i]];
+
+        vertexDataCombined.push_back(colour.x);
+        vertexDataCombined.push_back(colour.y);
+        vertexDataCombined.push_back(colour.z);
     }
 
     unsigned int indices[positionIndices.size()];
@@ -106,9 +127,9 @@ Cork::Model::Model(std::string objFilePath, glm::vec3 pos, glm::vec3 scale, glm:
     vbo = VBO(vertexDataCombined.data(), sizeof(float) * vertexDataCombined.size());
     ibo = IBO(indices, sizeof(indices));
 
-    unsigned int layout[] = {3, 3};
+    unsigned int layout[] = {3, 3, 3};
     vbo.bind();
-    vao = VAO(layout, 2);
+    vao = VAO(layout, 3);
 
     update();
 }

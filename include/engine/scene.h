@@ -38,7 +38,7 @@ struct Scene {
 
     Scene(Cork::Window* window, Cork::Camera* camera, Cork::LightSource* light);
 
-    void add(Cork::Mesh* newMesh);
+    void add(Cork::Mesh* newMesh, Cork::Shader* customShader = nullptr);
     void remove(Cork::Mesh* mesh);
 
     void startFrame();

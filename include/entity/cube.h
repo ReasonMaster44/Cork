@@ -6,23 +6,9 @@
 namespace Cork {
 
 struct Cube : Cork::Mesh {
-    static float cubeVertexData[216];
-    static unsigned int cubeIndexData[36];
-
-    static constexpr unsigned int floatsPerAttribute = 3;
-    static constexpr unsigned int numberOfVertAttributes = 3;
-
-    static unsigned int layout[numberOfVertAttributes];
-
-    static constexpr unsigned int floatsPerFace = 4 * floatsPerAttribute * numberOfVertAttributes;
-
-    float cvd[216];
-    
     Cube();
     
     Cube(glm::vec3 pos, glm::vec3 scale, glm::vec3 colour = glm::vec3(0.0f));
-
-    void updateBuffers();
 
     void colourFace(glm::vec3 face, glm::vec3 colour);
 

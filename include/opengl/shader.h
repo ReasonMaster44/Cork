@@ -22,7 +22,7 @@ struct Shader {
 
     Shader();
 
-    Shader(std::string vertSourceCodePath, std::string fragSourceCodePath);
+    Shader(std::string vertSourceCodePath, std::string fragSourceCodePath, std::string geomSourceCodePath = "");
 
     void bind();
 

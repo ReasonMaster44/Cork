@@ -32,8 +32,13 @@ Cork::Scene::Scene(Cork::Window* window, Cork::Camera* camera, Cork::LightSource
     light->update();
 }
 
-void Cork::Scene::add(Mesh* newMesh) {
+void Cork::Scene::add(Mesh* newMesh, Cork::Shader* customShader) {
+    if (std::find(meshes.begin(), meshes.end(), newMesh) != meshes.end()) {
+        return; // already in meshes
+    }
+    
     meshes.push_back(newMesh);
+    //newMesh->shader = customShader == nullptr ? customShader : &shader;
 }
 
 void Cork::Scene::remove(Mesh* mesh) {
@@ -43,7 +48,6 @@ void Cork::Scene::remove(Mesh* mesh) {
     );
 }
 
-
 void Cork::Scene::startFrame() {
     light->update();
 
@@ -52,6 +56,8 @@ void Cork::Scene::startFrame() {
     shader.bind();
 
     shader.setUniformMat4("u_view", camera->view);
+    shader.setUniformVec3("u_cameraPos", camera->pos);
+
     shader.setUniformMat4("u_projection", projection);
 
     shader.setUniformMat4("u_lightProjection", light->projection);

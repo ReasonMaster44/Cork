@@ -23,7 +23,7 @@ struct Renderer {
 
     void clear();
 
-    void render(Cork::IBO* ibo, Cork::VAO* vao, Cork::Shader* shader);
+    void render(Cork::IBO* ibo, Cork::VAO* vao, Cork::Shader* shader, GLenum mode = GL_TRIANGLES);
 
     void renderShadowMap(Cork::Scene* scene);
 
