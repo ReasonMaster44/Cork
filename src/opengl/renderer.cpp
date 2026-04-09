@@ -16,7 +16,8 @@
 #include "entity/mesh.h"
 #include "entity/quad.h"
 
-Cork::Renderer::Renderer(Window* window) {
+Cork::Renderer::Renderer(Window* window, glm::vec3 clearColour)
+        : clearColour(clearColour) {
     shadowMapDebugQuad = Cork::Quad(glm::vec2(0.0f), glm::vec2((float)window->WIN_W, (float)window->WIN_H));
     shadowMapDebugShader = Cork::Shader("../Cork/shaders/shadowmap_vert_debug.glsl", "../Cork/shaders/shadowmap_frag_debug.glsl");
 
@@ -24,7 +25,7 @@ Cork::Renderer::Renderer(Window* window) {
 }
 
 void Cork::Renderer::clear() {
-    GLCall(glClearColor(0.784, 0.851, 0.902, 1.0f));
+    GLCall(glClearColor(clearColour.x, clearColour.y, clearColour.z, 1.0f));
     GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 

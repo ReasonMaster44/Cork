@@ -12,14 +12,14 @@ namespace Cork {
 struct Text {
     FontAtlas* fontAtlas;
 
-    glm::vec2 textSize;
-    glm::vec2 pos;
-
     std::string text;
+
+    glm::vec2 pos;
+    glm::vec2 textSize;
 
     std::vector<Quad> quads;
     
-    Text(FontAtlas* fontAtlas, std::string text, glm::vec2 pos, glm::vec2 size);
+    Text(FontAtlas* fontAtlas, std::string text, glm::vec2 pos, glm::vec2 textSize);
 
     void setText(std::string newText);
 };

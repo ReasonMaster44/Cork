@@ -19,7 +19,9 @@ struct Renderer {
 
     Cork::Shader shadowMapDebugShader;
 
-    Renderer(Cork::Window* window);
+    glm::vec3 clearColour;
+
+    Renderer(Cork::Window* window, glm::vec3 clearColour);
 
     void clear();
 
