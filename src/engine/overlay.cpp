@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include <algorithm>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -29,10 +31,7 @@ Cork::Overlay::Overlay(Window* window) {
 
 void Cork::Overlay::add(Quad* newQuad) {
     quads.push_back(newQuad);
-}
-
-void Cork::Overlay::setShader(Shader* shader) {
-    currentShader = shader;
+    newQuad->overlays.push_back(this);
 }
 
 void Cork::Overlay::add(Text* text) {
@@ -41,16 +40,37 @@ void Cork::Overlay::add(Text* text) {
     }
 }
 
-void Cork::Overlay::startFrame() {
-    //basicShader.bind();
-    //basicShader.setUniformMat4("u_projection", projection);
+void Cork::Overlay::remove(Quad* quadToRemove) {
+    quads.erase(std::remove(quads.begin(), quads.end(), quadToRemove), quads.end());
+}
 
-    //textureShader.bind();
-    //textureShader.setUniformMat4("u_projection", projection);
-    currentShader->bind();
-    currentShader->setUniformMat4("u_projection", projection);
+void Cork::Overlay::remove(Text* textToRemove) {
+    for (Quad& quad : textToRemove->quads) {
+        quads.erase(std::remove(quads.begin(), quads.end(), &quad), quads.end());
+
+        quad.removeFromOverlay(this);
+    }
+}
+
+
+void Cork::Overlay::setShader(Shader* shader) {
+    currentShader = shader;
+}
+
+void Cork::Overlay::startFrame() {
+    basicShader.bind();
+    basicShader.setUniformMat4("u_projection", projection);
+
+    textureShader.bind();
+    textureShader.setUniformMat4("u_projection", projection);
+
+    textureShader.unbind();
 }
 
 void Cork::Overlay::useTexture() {
     currentShader = &textureShader;
+}
+
+void Cork::Overlay::useColour() {
+    currentShader = &basicShader;
 }

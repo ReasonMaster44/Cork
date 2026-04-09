@@ -25,7 +25,7 @@ Cork::Texture::Texture()
 void Cork::Texture::loadFromFile(const std::string filePath) {
     GLCall(glBindTexture(GL_TEXTURE_2D, id));
     
-    stbi_set_flip_vertically_on_load(1);
+    //stbi_set_flip_vertically_on_load(true);
     m_localBuffer = stbi_load(filePath.c_str(), &m_width, &m_height, &m_bitsPerPixel, 4);
 
     GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_localBuffer));

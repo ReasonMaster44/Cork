@@ -10,6 +10,8 @@
 
 namespace Cork {
 
+struct Overlay;
+
 struct Quad {
     VBO vbo;
     IBO ibo;
@@ -19,6 +21,8 @@ struct Quad {
     glm::vec2 scale;
     glm::vec3 colour;
 
+    std::vector<Cork::Overlay*> overlays;
+
     float rotation = 0.0f;
 
     glm::mat4 model;
@@ -26,8 +30,12 @@ struct Quad {
     Texture* texture = nullptr;
 
     Quad();
+    ~Quad();
     
-    Quad(glm::vec2 pos, glm::vec2 scale, glm::vec3 colour = glm::vec3(0.0f));
+    Quad(glm::vec2 pos, glm::vec2 scale, glm::vec3 colour = glm::vec3(0.0f), std::vector<float> texCoords = {0.0f, 1.0f,
+                                                                                                             1.0f, 1.0f,
+                                                                                                             0.0f, 0.0f,
+                                                                                                             1.0f, 0.0f});
 
     void addTexture(Texture* _texture);
 
@@ -38,6 +46,10 @@ struct Quad {
     void rotate(float _rotation);
 
     void updateModel();
+
+    void removeFromOverlays();
+
+    void removeFromOverlay(Cork::Overlay* overlay);
 };
 
 }

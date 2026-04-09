@@ -12,6 +12,10 @@ struct Window {
 
     int frameBufferWidth, frameBufferHeight;
 
+    int frameCount = 0;
+    double lastTime;
+    double currentTime;
+    float fps;
 
     Window(unsigned int win_w, unsigned int win_h, const char *title);
 
@@ -19,6 +23,8 @@ struct Window {
 
     void disableCursor();
     void enableCursor();
+
+    void update();
 };
 
 }

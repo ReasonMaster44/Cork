@@ -27,6 +27,9 @@ Cork::Window::Window(unsigned int win_w, unsigned int win_h, const char *title)
     
     glfwGetFramebufferSize(win, &frameBufferWidth, &frameBufferHeight);
     glViewport(0, 0, frameBufferWidth, frameBufferHeight);
+
+    lastTime = glfwGetTime();
+    currentTime = glfwGetTime();
 }
 
 bool Cork::Window::shouldClose() {
@@ -39,4 +42,16 @@ void Cork::Window::disableCursor() {
 
 void Cork::Window::enableCursor() {
     glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
+void Cork::Window::update() {
+    frameCount++;
+
+    currentTime = glfwGetTime();
+
+    if (currentTime - lastTime >= 1.0) {
+        fps = frameCount / (currentTime - lastTime);
+        frameCount = 0;
+        lastTime = currentTime;
+    }
 }

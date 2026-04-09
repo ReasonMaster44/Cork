@@ -6,17 +6,13 @@
 #include "opengl/texture.h"
 #include "opengl/shader.h"
 
+#include "engine/overlay.h"
+
+#include <iostream>
+
 #include "glm/glm.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 
-// Flat shading:
-float quadVertexData[] = {
-    // Positions:   // Texture coords:
-    0.0f, 1.0f,     0.0f, 0.0f,
-    1.0f, 1.0f,     1.0f, 0.0f,
-    0.0f, 0.0f,     0.0f, 1.0f,
-    1.0f, 0.0f,     1.0f, 1.0f
-};
 
 unsigned int quadIndexData[] = {
     0, 1, 2,
@@ -25,10 +21,22 @@ unsigned int quadIndexData[] = {
 
 Cork::Quad::Quad() {}
 
-Cork::Quad::Quad(glm::vec2 pos, glm::vec2 scale, glm::vec3 colour) 
+Cork::Quad::~Quad() {
+    removeFromOverlays();
+}
+
+Cork::Quad::Quad(glm::vec2 pos, glm::vec2 scale, glm::vec3 colour, std::vector<float> texCoords) 
     : pos(pos), scale(scale), colour(colour) {
         
     unsigned int layout[] = {2, 2};
+
+    float quadVertexData[] = {
+        // Positions:   // Texture coords:
+        0.0f, 1.0f,     texCoords[0], texCoords[1],
+        1.0f, 1.0f,     texCoords[2], texCoords[3],
+        0.0f, 0.0f,     texCoords[4], texCoords[5],
+        1.0f, 0.0f,     texCoords[6], texCoords[7]
+    };
 
     vbo = VBO(quadVertexData, sizeof(quadVertexData));
     ibo = IBO(quadIndexData, sizeof(quadIndexData));
@@ -63,4 +71,14 @@ void Cork::Quad::updateModel() {
     model = glm::translate(model, glm::vec3(pos, 0.0f));
     model = glm::rotate(model, rotation, glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::scale(model, glm::vec3(scale, 1.0f));
+}
+
+void Cork::Quad::removeFromOverlays() {
+    for (Overlay* overlay : overlays) {
+        overlay->remove(this);
+    }
+}
+
+void Cork::Quad::removeFromOverlay(Cork::Overlay* overlay) {
+    overlays.erase(std::remove(overlays.begin(), overlays.end(), overlay), overlays.end());
 }

@@ -26,14 +26,17 @@ struct Overlay {
     Overlay(Window* window);
 
     void add(Quad* newQuad);
-
     void add(Text* text);
+
+    void remove(Quad* quadToRemove);
+    void remove(Text* textToRemove);
 
     void setShader(Cork::Shader* newShader);
 
     void startFrame();
 
     void useTexture();
+    void useColour();
 };
 
 }

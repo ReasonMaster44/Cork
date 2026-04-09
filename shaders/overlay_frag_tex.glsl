@@ -7,9 +7,9 @@ out vec4 fragColour;
 uniform sampler2D u_texture;
 
 void main() {
-    vec3 textureColour = texture(u_texture, (v_texCoords)).xyz;
+    vec4 textureColour = texture(u_texture, (v_texCoords));
 
-    vec3 colour = textureColour;
+    vec4 colour = textureColour;
 
-    fragColour = vec4(colour, 1.0);
+    fragColour = colour;
 }

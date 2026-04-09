@@ -139,15 +139,20 @@ void Cork::Renderer::renderOverlay(Overlay* overlay) {
     GLCall(glDisable(GL_DEPTH_TEST));
     
     for (Quad* quad : overlay->quads) {
+        if (quad->texture == nullptr) {
+            overlay->useColour();
+        } else {
+            overlay->useTexture();
+        }
+
         overlay->currentShader->bind();
         overlay->currentShader->setUniformMat4("u_model", quad->model);
 
         if (quad->texture == nullptr) {
             overlay->currentShader->setUniformVec3("u_baseColour", quad->colour);
         } else {
-            quad->texture->bind(5);
-            overlay->currentShader->setUniform1i("u_texture", 5);  
-            //quad->texture->unbind();
+            quad->texture->bind(4);
+            overlay->currentShader->setUniform1i("u_texture", 4); 
         }
 
         //quad->texture->bind(0);
