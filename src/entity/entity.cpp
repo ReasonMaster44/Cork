@@ -41,8 +41,9 @@ void Cork::Entity::rotateAround(float angle, glm::vec3 axis, glm::vec3 point) {
     update();
 }
 
-void Cork::Entity::rotate(glm::vec3 _rotation) {
-    rotation += _rotation;
+void Cork::Entity::rotate(float angle, glm::vec3 axis) {
+    //rotation += _rotation;
+    rotateAround(angle, axis, pos);
     update();
 }
 

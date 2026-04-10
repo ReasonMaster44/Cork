@@ -16,43 +16,66 @@
 
 Cork::Vertex::Vertex(glm::vec3 pos, glm::vec3 norm) : pos(pos), norm(norm) {}
 
+Cork::Material::Material(glm::vec3 diffuse) : diffuse(diffuse) {}
 
-Cork::Model::Model(std::string objFilePath, glm::vec3 pos, glm::vec3 scale, glm::vec3 colour) 
+Cork::Model::Model(std::string objFilePath, std::string mtlFilePath, glm::vec3 pos, glm::vec3 scale, glm::vec3 colour) 
     : Mesh(pos, scale, colour) {
 
-    std::ifstream file(objFilePath);
+    std::ifstream objFile(objFilePath);
+    std::ifstream mtlFile(mtlFilePath);
     std::string line;
+
+    unsigned int firstSpaceIndex;
+    unsigned int secondSpaceIndex;
+
+    std::string id;
+    glm::vec3 diffuse;
+
+    std::unordered_map<std::string, Cork::Material> materials;
+
+    while (std::getline(mtlFile, line)) {
+        if (line.substr(0, 6) == "newmtl") {
+            id = line.substr(7);
+        }
+
+        if (line.substr(0, 2) == "Kd") {
+            firstSpaceIndex = line.find(" ", 3);
+            secondSpaceIndex = line.find(" ", firstSpaceIndex + 1);
+
+            //std::cout << firstSpaceIndex << "\n";
+
+            float r = std::stof(line.substr(2, firstSpaceIndex - 2));
+            float g = std::stof(line.substr(firstSpaceIndex + 1, secondSpaceIndex - firstSpaceIndex - 1));
+            float b = std::stof(line.substr(secondSpaceIndex + 1));
+
+            materials.emplace(id, glm::vec3(r, g, b));
+            //materials.insert({id, Material(glm::vec3(r, g, b))});
+        }
+    }
 
     std::vector<unsigned int> positionIndices;
     std::vector<unsigned int> normalIndices;
     std::vector<unsigned int> colourIndices;
 
-    unsigned int firstSpaceIndex;
-    unsigned int secondSpaceIndex;
-    unsigned int thirdSpaceIndex;
-    unsigned int fourthSpaceIndex;
-    unsigned int fifthSpaceIndex;
+    std::string currentMaterialId;
 
-    while (std::getline(file, line)) {
+    std::vector<std::string> materialIds;
+
+    while (std::getline(objFile, line)) {
         // Vertex positions:
         if (line.substr(0, 2) == "v ") {
             firstSpaceIndex = line.find(" ", 2);
             secondSpaceIndex = line.find(" ", firstSpaceIndex + 1);
 
-            thirdSpaceIndex = line.find(" ", secondSpaceIndex + 1);
-            fourthSpaceIndex = line.find(" ", thirdSpaceIndex + 1);
-            fifthSpaceIndex = line.find(" ", fourthSpaceIndex + 1);
-
             float x = std::stof(line.substr(2, firstSpaceIndex - 2));
             float y = std::stof(line.substr(firstSpaceIndex + 1, secondSpaceIndex - firstSpaceIndex - 1));
             float z = std::stof(line.substr(secondSpaceIndex + 1));
 
-            float r = std::stof(line.substr(thirdSpaceIndex + 1, fourthSpaceIndex - thirdSpaceIndex - 1));
-            float g = std::stof(line.substr(fourthSpaceIndex + 1, fifthSpaceIndex - fourthSpaceIndex - 1));
-            float b = std::stof(line.substr(fourthSpaceIndex + 1));
-
             vertexPositions.push_back(glm::vec3(x, y, z));
-            vertexColours.push_back(glm::vec3(r, g, b));
+
+        } else if (line.substr(0, 6) == "usemtl") {
+            currentMaterialId = line.substr(7);
+            materialIds.push_back(line.substr(7));
 
         } else if (line.substr(0, 2) == "f ") { // Indices:
             firstSpaceIndex = line.find(" ", 2);
@@ -73,12 +96,14 @@ Cork::Model::Model(std::string objFilePath, glm::vec3 pos, glm::vec3 scale, glm:
             unsigned int normalIndex1 = std::stoul(v1.substr(v1.find("/", v1.find("/") + 1) + 1)) - 1;
             unsigned int normalIndex2 = std::stoul(v2.substr(v2.find("/", v2.find("/") + 1) + 1)) - 1;
             unsigned int normalIndex3 = std::stoul(v3.substr(v3.find("/", v3.find("/") + 1) + 1)) - 1;
-
-            //std::cout << normalIndex1 << ", " << normalIndex2 << ", " << normalIndex3 << std::endl;
             
             normalIndices.push_back(normalIndex1);
             normalIndices.push_back(normalIndex2);
             normalIndices.push_back(normalIndex3);
+    
+            colourIndices.push_back(materialIds.size() - 1);
+            colourIndices.push_back(materialIds.size() - 1);
+            colourIndices.push_back(materialIds.size() - 1);
 
         } else if (line.substr(0, 3) == "vn ") {
             firstSpaceIndex = line.find(" ", 3);
@@ -114,11 +139,13 @@ Cork::Model::Model(std::string objFilePath, glm::vec3 pos, glm::vec3 scale, glm:
         vertexDataCombined.push_back(norm.y);
         vertexDataCombined.push_back(norm.z);
 
-        glm::vec3 colour = vertexColours[positionIndices[i]];
+        std::string materialId = materialIds[colourIndices[i]];
 
-        vertexDataCombined.push_back(colour.x);
-        vertexDataCombined.push_back(colour.y);
-        vertexDataCombined.push_back(colour.z);
+        Cork::Material& material = materials.at(materialId);
+
+        vertexDataCombined.push_back(material.diffuse.x);
+        vertexDataCombined.push_back(material.diffuse.y);
+        vertexDataCombined.push_back(material.diffuse.z);
     }
 
     unsigned int indices[positionIndices.size()];

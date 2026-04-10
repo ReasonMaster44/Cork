@@ -23,7 +23,7 @@ struct Entity {
 
     void rotateAround(float angle, glm::vec3 axis, glm::vec3 point);
     
-    void rotate(glm::vec3 _rotation);
+    void rotate(float angle, glm::vec3 axis);
 
     virtual void update();
 };

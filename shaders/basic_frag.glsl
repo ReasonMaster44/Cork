@@ -12,6 +12,8 @@ uniform vec3 u_lightPos;
 uniform vec3 u_baseColour;
 uniform sampler2D u_shadowMap;
 
+vec3 cameraPos = u_cameraPos;
+
 vec4 f = texture(u_shadowMap, vec2(0.0));
 
 vec3 lightColour = vec3(1.0, 1.0, 1.0);
@@ -71,12 +73,6 @@ void main() {
     float shadow = calculateShadow();
 
     vec3 colour = (ambient + (1.0 - shadow)) * diffuse * baseColour;
-    
-    float fragToCamDist = distance(v_fragPos, u_cameraPos);
-    if (fragToCamDist > fogDist) {
-        colour = mix(colour, vec3(0.784, 0.851, 0.902), clamp((fragToCamDist - fogDist) * 0.03, 0.0, 1.0));
-    }
-    
-    
+
     fragColour = vec4(colour, 1.0);
 }

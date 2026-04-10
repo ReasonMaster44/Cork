@@ -12,8 +12,14 @@ struct Vertex {
     Vertex(glm::vec3 pos, glm::vec3 norm);
 };
 
+struct Material {
+    glm::vec3 diffuse;
+
+    Material(glm::vec3 diffuse);
+};
+
 struct Model : Cork::Mesh {
-    Model(std::string objFilePath, glm::vec3 pos, glm::vec3 scale, glm::vec3 colour);
+    Model(std::string objFilePath, std::string mtlFilePath, glm::vec3 pos, glm::vec3 scale, glm::vec3 colour);
 };
 
 }
