@@ -50,6 +50,8 @@ struct Quad {
     void removeFromOverlays();
 
     void removeFromOverlay(Cork::Overlay* overlay);
+
+    
 };
 
 }

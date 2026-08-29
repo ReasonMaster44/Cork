@@ -20,10 +20,11 @@ void Cork::Camera::update() {
 
     if (setLookAt) {
         front = glm::normalize(lookAtTarget - pos);
+        _lookAtTarget = lookAtTarget;
     } else {
         glm::vec3 _front = glm::vec3( cos(glm::radians(yaw)) * cos(glm::radians(pitch)), 
-                                    sin(glm::radians(pitch)),
-                                    -sin(glm::radians(yaw)) * cos(glm::radians(pitch)));
+                                      sin(glm::radians(pitch)),
+                                     -sin(glm::radians(yaw)) * cos(glm::radians(pitch)));
 
         _front.x = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
         _front.y = sin(glm::radians(pitch));

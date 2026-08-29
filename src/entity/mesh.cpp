@@ -24,7 +24,7 @@ void Cork::Mesh::update() {
     model = glm::scale(model, scale);
 }
 
-bool Cork::Mesh::rayIntersect(glm::vec3 rayOrigin, glm::vec3 rayDir) {
+std::optional<glm::vec3> Cork::Mesh::rayIntersect(glm::vec3 rayOrigin, glm::vec3 rayDir) {
     glm::vec3 min = pos - scale;
     glm::vec3 max = pos + scale;
 
@@ -37,7 +37,10 @@ bool Cork::Mesh::rayIntersect(glm::vec3 rayOrigin, glm::vec3 rayDir) {
     float tNear = std::max(std::max(t1.x, t1.y), t1.z);
     float tFar  = std::min(std::min(t2.x, t2.y), t2.z);
 
-    return tNear < tFar;
+    if (tNear < tFar && tFar > 0.0f)
+        return rayOrigin + rayDir * tNear;
+
+    return std::nullopt;
 }
 
 void Cork::Mesh::addTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec3 colour) {

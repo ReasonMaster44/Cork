@@ -40,7 +40,7 @@ struct Mesh : Cork::Entity {
 
     void update() override;
 
-    bool rayIntersect(glm::vec3 rayOrigin, glm::vec3 rayDir);
+    std::optional<glm::vec3> rayIntersect(glm::vec3 rayOrigin, glm::vec3 rayDir);
 
 };
 

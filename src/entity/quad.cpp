@@ -32,10 +32,10 @@ Cork::Quad::Quad(glm::vec2 pos, glm::vec2 scale, glm::vec3 colour, std::vector<f
 
     float quadVertexData[] = {
         // Positions:   // Texture coords:
-        0.0f, 1.0f,     texCoords[0], texCoords[1],
-        1.0f, 1.0f,     texCoords[2], texCoords[3],
-        0.0f, 0.0f,     texCoords[4], texCoords[5],
-        1.0f, 0.0f,     texCoords[6], texCoords[7]
+        -1.0f,  1.0f,     texCoords[0], texCoords[1],
+         1.0f,  1.0f,     texCoords[2], texCoords[3],
+        -1.0f, -1.0f,     texCoords[4], texCoords[5],
+         1.0f, -1.0f,     texCoords[6], texCoords[7]
     };
 
     vbo = VBO(quadVertexData, sizeof(quadVertexData));
