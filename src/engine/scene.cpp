@@ -11,6 +11,7 @@
 
 #include "entity/cube.h"
 #include "entity/mesh.h"
+#include "entity/mesh_group.h"
 
 #include "engine/window.h"
 #include "engine/scene.h"
@@ -32,7 +33,7 @@ Cork::Scene::Scene(Cork::Window* window, Cork::Camera* camera, Cork::LightSource
     light->update();
 }
 
-void Cork::Scene::add(Mesh* newMesh, Cork::Shader* customShader) {
+void Cork::Scene::add(Cork::Mesh* newMesh, Cork::Shader* customShader) {
     if (std::find(meshes.begin(), meshes.end(), newMesh) != meshes.end()) {
         return; // already in meshes
     }
@@ -41,7 +42,7 @@ void Cork::Scene::add(Mesh* newMesh, Cork::Shader* customShader) {
     //newMesh->shader = customShader == nullptr ? customShader : &shader;
 }
 
-void Cork::Scene::remove(Mesh* mesh) {
+void Cork::Scene::remove(Cork::Mesh* mesh) {
     meshes.erase(
         std::remove(meshes.begin(), meshes.end(), mesh),
         meshes.end()

@@ -2,6 +2,8 @@
 
 #include "engine/window.h"
 #include "entity/mesh.h"
+#include "entity/mesh_group.h"
+
 #include "opengl/shader.h"
 #include "opengl/shadow_map.h"
 #include "opengl/framebuffer.h"
@@ -39,6 +41,10 @@ struct Scene {
     Scene(Cork::Window* window, Cork::Camera* camera, Cork::LightSource* light);
 
     void add(Cork::Mesh* newMesh, Cork::Shader* customShader = nullptr);
+
+    template <typename T>
+    void add(Cork::MeshGroup<T>* newMeshGroup, Cork::Shader* customShader = nullptr);
+
     void remove(Cork::Mesh* mesh);
 
     void startFrame();
@@ -47,5 +53,15 @@ struct Scene {
 
     void addPostProcessPass(std::string shaderFilePath);
 };
+
+template <typename T>
+void Scene::add(Cork::MeshGroup<T>* meshGroup, Cork::Shader* customShader) {
+    for (auto& mesh : meshGroup->meshes) {
+        if (std::find(meshes.begin(), meshes.end(), &mesh) != meshes.end()) {
+            continue;
+        }
+        meshes.push_back(&mesh);
+    }
+}
 
 }
