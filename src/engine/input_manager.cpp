@@ -32,6 +32,14 @@ void Cork::InputManager::update() {
         keyHist[1] = GLFW_KEY_RIGHT;
     } else if (keySpace()) {
         keyHist[1] = GLFW_KEY_SPACE;
+    } else if (keyW()) {
+        keyHist[1] = GLFW_KEY_W;
+    } else if (keyS()) {
+        keyHist[1] = GLFW_KEY_S;
+    } else if (keyA()) {
+        keyHist[1] = GLFW_KEY_A;
+    } else if (keyD()) {
+        keyHist[1] = GLFW_KEY_D;
     } else {
         keyHist[1] = -1;
     }
@@ -98,6 +106,14 @@ bool Cork::InputManager::clickKeyLeft() { return keyHist[1] == GLFW_KEY_LEFT && 
 bool Cork::InputManager::clickKeyRight() { return keyHist[1] == GLFW_KEY_RIGHT && keyHist[0] != GLFW_KEY_RIGHT; }
 
 bool Cork::InputManager::clickKeySpace() { return keyHist[1] == GLFW_KEY_SPACE && keyHist[0] != GLFW_KEY_SPACE; }
+
+bool Cork::InputManager::clickKeyW() { return keyHist[1] == GLFW_KEY_W && keyHist[0] != GLFW_KEY_W; }
+
+bool Cork::InputManager::clickKeyS() { return keyHist[1] == GLFW_KEY_S && keyHist[0] != GLFW_KEY_S; }
+
+bool Cork::InputManager::clickKeyA() { return keyHist[1] == GLFW_KEY_A && keyHist[0] != GLFW_KEY_A; }
+
+bool Cork::InputManager::clickKeyD() { return keyHist[1] == GLFW_KEY_D && keyHist[0] != GLFW_KEY_D; }
 
 bool Cork::InputManager::clickLc() { return lcHist[1] == 1 && lcHist[0] != 1; }
 

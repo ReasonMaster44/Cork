@@ -68,6 +68,11 @@ struct InputManager {
     bool clickKeyRight();
     bool clickKeySpace();
 
+    bool clickKeyW();
+    bool clickKeyS();
+    bool clickKeyA();
+    bool clickKeyD();
+
     bool clickLc();
 
     bool keySpace();
