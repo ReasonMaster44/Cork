@@ -28,6 +28,21 @@ void Cork::Entity::setPos(glm::vec3 newPos) {
     update();
 }
 
+void Cork::Entity::setX(float x) {
+    pos = glm::vec3(x, pos.y, pos.z);
+    update();
+}
+
+void Cork::Entity::setY(float y) {
+    pos = glm::vec3(pos.x, y, pos.z);
+    update();
+}
+
+void Cork::Entity::setZ(float z) {
+    pos = glm::vec3(pos.x, pos.y, z);
+    update();
+}
+
 void Cork::Entity::rotateAround(float angle, glm::vec3 axis, glm::vec3 point) {
     glm::mat4 m(1.0f);
     m = glm::translate(m, point);

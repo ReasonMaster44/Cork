@@ -21,6 +21,10 @@ struct Entity {
 
     void setPos(glm::vec3 newPos);
 
+    void setX(float x);
+    void setY(float y);
+    void setZ(float z);
+
     void rotateAround(float angle, glm::vec3 axis, glm::vec3 point);
     
     void rotate(float angle, glm::vec3 axis);
